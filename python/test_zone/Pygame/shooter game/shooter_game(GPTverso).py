@@ -1,8 +1,7 @@
 from pygame import *
 from random import randint
 
-# Initialize Pygame
-init()
+
 
 # Set up display
 win_width = 700
