@@ -57,7 +57,9 @@ class Player(GameSprite):
            self.rect.x += self.speed
  #method to "shoot" (use the player position to create a bullet there)
    def fire(self):
-       pass
+
+    bulet = Bullet('bullet.png', ship.rect.x  , ship.rect.y , 80 , 100 , 10)
+         
 
 
 #enemy sprite class  
@@ -72,8 +74,16 @@ class Enemy(GameSprite):
            self.rect.y = 0
            lost = lost + 1
 class Bullet(GameSprite):
-    def shoot():
-        pass
+    def update():
+        self.rect.y -= self.speed
+        global lost
+       #disappears upon reaching the screen edge
+        if self.rect.y > win_height:
+           self.rect.x = Player.player_x
+           self.rect.y = 0
+           lost = lost + 1
+
+        
 
 
 
@@ -128,6 +138,9 @@ while run:
        #update them in a new location in each loop iteration
        ship.reset()
        monsters.draw(window)
+       keys = key.get_pressed()
+       if keys[K_SPACE] :
+            ship.fire()
 
 
        display.update()
