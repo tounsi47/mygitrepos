@@ -1,31 +1,47 @@
 from pygame import *
-import random
+from random import randint
 
 # Initialize Pygame
+init()
 
-
-# Set up the display
+# Set up display
 win_width = 700
 win_height = 500
-pywin = display.set_mode((win_width, win_height))
-display.set_caption('pygame window')
+display.set_caption("Shooter")
+window = display.set_mode((win_width, win_height))
 
-# Load resources
-background = transform.scale(image.load('galaxy.jpg'), (win_width, win_height))
+# Load images and sounds
+img_back = "galaxy.jpg"
+img_hero = "rocket.png"
+img_enemy = "ufo.png"
+img_bullet = "bullet.png"
+mixer.init()
+mixer.music.load('space.ogg')
 fire_sound = mixer.Sound('fire.ogg')
 
-# Define the player and enemy classes
+# Fonts
+font.init()
+font2 = font.Font(None, 36)
+
+# Game variables
+score = 0
+lost = 0
+
+# Background music
+mixer.music.play(-1)  # Loop indefinitely
+
+# Game classes
 class GameSprite(sprite.Sprite):
-    def __init__(self, image, x, y, speed):
+    def __init__(self, image, x, y, size_x, size_y, speed):
         super().__init__()
-        self.image = transform.scale(image.load(image), (65, 65))
-        self.speed = speed
+        self.image = transform.scale(image, (size_x, size_y))
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+        self.speed = speed
 
     def reset(self):
-        pywin.blit(self.image, (self.rect.x, self.rect.y))
+        window.blit(self.image, (self.rect.x, self.rect.y))
 
 class Player(GameSprite):
     def update(self):
@@ -34,73 +50,70 @@ class Player(GameSprite):
             self.rect.x -= self.speed
         if keys[K_RIGHT] and self.rect.x < win_width - 80:
             self.rect.x += self.speed
-        if keys[K_SPACE]:
-            self.fire()
 
     def fire(self):
-        bullet = Bullet('bullet.png', self.rect.centerx, self.rect.top)
+        bullet = Bullet(img_bullet, self.rect.x + 20, self.rect.y, 10, 20, -10)
         bullets.add(bullet)
         fire_sound.play()
 
 class Enemy(GameSprite):
-    def __init__(self, image, x, y, speed):
-        super().__init__(image, x, y, speed)
-        self.direction = random.choice(['up', 'down'])
-
-    def update(self):
-        if self.rect.y <= 0:
-            self.direction = "down"
-        if self.rect.y >= win_height - 65:
-            self.direction = "up"
-
-        if self.direction == "up":
-            self.rect.y -= self.speed
-        else:
-            self.rect.y += self.speed
-
-class Bullet(GameSprite):
-    def __init__(self, image, x, y):
-        super().__init__(image, x, y, -10)
-
     def update(self):
         self.rect.y += self.speed
-        if self.rect.bottom < 0:
-            self.kill()
+        if self.rect.y > win_height:
+            self.rect.x = randint(80, win_width - 80)
+            self.rect.y = 0
+            global lost
+            lost += 1
 
-clock = time.Clock()
-FPS = 60
+class Bullet(GameSprite):
+    def update(self):
+        self.rect.y += self.speed
+        if self.rect.y < 0:
+            self.kill()  # Remove bullet if it goes off-screen
 
-# Create sprite groups
-all_sprites = sprite.Group()
+
+# Load images
+background = transform.scale(image.load(img_back), (win_width, win_height))
+player = Player(image.load(img_hero), 5, win_height - 100, 80, 100, 10)  # Corrected line
+enemies = sprite.Group()
 bullets = sprite.Group()
 
-# Create player and enemy instances
-player = Player('rocket.png', 5, win_height - 80, 4)
-enemy = Enemy('ufo.png', 5, win_height - 400, 4)
-
-# Add sprites to sprite groups
-all_sprites.add(player, enemy)
+# Create enemies
+for _ in range(5):
+    enemy = Enemy(image.load(img_enemy), randint(80, win_width - 80), -40, 80, 50, randint(1, 5))
+    enemies.add(enemy)
 
 # Main game loop
-game = True
-while game:
+run = True
+while run:
     for e in event.get():
         if e.type == QUIT:
-            game = False
+            run = False
 
-    # Update
-    all_sprites.update()
+    if not lost:
+        window.blit(background, (0, 0))
 
-    # Check for collisions
-    hits = sprite.groupcollide(bullets, all_sprites, True, True)
-    for hit in hits:
-        enemy = Enemy('ufo.png', random.randint(0, win_width - 65), win_height, 4)
-        all_sprites.add(enemy)
+        for bullet in bullets:
+            bullet.update()
 
-    # Render
-    pywin.blit(background, (0, 0))
-    all_sprites.draw(pywin)
+        player.update()
+        player.reset()
 
-    display.update()
-    clock.tick(FPS)
+        enemies.update()
+        enemies.draw(window)
 
+        bullets.draw(window)
+
+        # Collision detection between bullets and enemies
+        hits = sprite.groupcollide(enemies, bullets, True, True)
+        for hit in hits:
+            score += 1
+            enemy = Enemy(image.load(img_enemy), randint(80, win_width - 80), -40, 80, 50, randint(1, 5))
+            enemies.add(enemy)
+
+        # Display score
+        text = font2.render("Score: " + str(score), 1, (255, 255, 255))
+        window.blit(text, (10, 20))
+
+        display.update()
+        time.delay(50)
