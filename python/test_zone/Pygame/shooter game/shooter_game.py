@@ -1,3 +1,4 @@
+
 from pygame import *
 from random import randint
 
@@ -57,11 +58,7 @@ class Player(GameSprite):
            self.rect.x += self.speed
  #method to "shoot" (use the player position to create a bullet there)
    def fire(self):
-
-       bulet.update()
-       bulet.reset()
-
-         
+       pass
 
 
 #enemy sprite class  
@@ -75,11 +72,6 @@ class Enemy(GameSprite):
            self.rect.x = randint(80, win_width - 80)
            self.rect.y = 0
            lost = lost + 1
-class Bullet(GameSprite):
-    def shoot(self):
-        bulet.blit(window , ( 100 , 200))
-        
-
 
 
 #create a small window
@@ -92,7 +84,8 @@ background = transform.scale(image.load(img_back), (win_width, win_height))
 
 #create sprites
 ship = Player(img_hero, 5, win_height - 100, 80, 100, 10)
-bulet = Bullet('bullet.png',ship.rect.x() , ship.rect.y(),  60, 80, 100)
+
+
 monsters = sprite.Group()
 for i in range(1, 6):
    monster = Enemy(img_enemy, randint(80, win_width - 80), -40, 80, 50, randint(1, 5))
@@ -132,9 +125,6 @@ while run:
        #update them in a new location in each loop iteration
        ship.reset()
        monsters.draw(window)
-       keys = key.get_pressed()
-       if keys[K_SPACE]:
-            ship.fire()
 
 
        display.update()
