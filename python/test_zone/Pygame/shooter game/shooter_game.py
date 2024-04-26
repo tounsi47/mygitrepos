@@ -58,7 +58,8 @@ class Player(GameSprite):
            self.rect.x += self.speed
  #method to "shoot" (use the player position to create a bullet there)
    def fire(self):
-       pass
+       bullet.update()
+      
 
 
 #enemy sprite class  
@@ -67,11 +68,22 @@ class Enemy(GameSprite):
    def update(self):
        self.rect.y += self.speed
        global lost
-       #disappears upon reaching the screen edge
+       #disappears ufo reaching the screen edge
        if self.rect.y > win_height:
            self.rect.x = randint(80, win_width - 80)
            self.rect.y = 0
            lost = lost + 1
+class Bullet(GameSprite):
+    def update(self):
+        keys = key.get_pressed
+        global x_position
+        global y_position
+        if keys[K_SPACE] and self.rect.x > 5:
+           self.rect.x = randint(80, win_width - 80)
+           self.rect.y = 0
+
+
+
 
 
 #create a small window
@@ -84,12 +96,16 @@ background = transform.scale(image.load(img_back), (win_width, win_height))
 
 #create sprites
 ship = Player(img_hero, 5, win_height - 100, 80, 100, 10)
+x_position = ship.rect.x
+y_position = ship.rect.y
 
 
 monsters = sprite.Group()
 for i in range(1, 6):
    monster = Enemy(img_enemy, randint(80, win_width - 80), -40, 80, 50, randint(1, 5))
    monsters.add(monster)
+
+bullet = Bullet('bullet.png' , ship.rect.x , ship.rect.y, 80 , 100 , 10)
 
 
 #the "game is over" variable: as soon as True is there, sprites stop working in the main loop
@@ -114,7 +130,7 @@ while run:
 
 
        text_lose = font2.render("Missed: " + str(lost), 1, (255, 255, 255))
-       window.blit(text_lose, (10, 50))
+       window.blit(text_lose, (10, 60))
 
 
        #launch sprite movements
@@ -125,6 +141,7 @@ while run:
        #update them in a new location in each loop iteration
        ship.reset()
        monsters.draw(window)
+
 
 
        display.update()
