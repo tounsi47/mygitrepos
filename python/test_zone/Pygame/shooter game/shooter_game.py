@@ -97,7 +97,7 @@ ship = Player(img_hero, 5, win_height - 100, 80, 100, 10)
 
 
 monsters = sprite.Group()
-for i in range(1, 6):
+for i in range(1, 11):
    monster = Enemy(img_enemy, randint(80, win_width - 80), -40, 80, 50, randint(1, 5))
    monsters.add(monster)
 
@@ -120,6 +120,9 @@ while run:
    if not finish:
        #update the background
        window.blit(background,(0,0))
+       collisions = sprite.groupcollide(bullets, monsters, True, True)
+       for bullet, monsters_hit in collisions.items():
+            score += len(monsters_hit)
 
 
        #write text on the screen
@@ -141,6 +144,22 @@ while run:
        ship.reset()
        monsters.draw(window)
        bullets.draw(window)
+       if sprite.spritecollide(ship, monsters, False):
+            text = font2.render("Defeat !!", 1, (255, 255, 255))
+            window.blit(text, (300, 230))
+            finish = True
+       
+# Check for defeat condition
+       if lost == 3:
+            text = font2.render("Defeat !!", 1, (255, 255, 255))
+            window.blit(text, (300, 230))
+            finish = True
+
+# Check for victory condition
+       if score == 10:
+            text = font2.render("Victory !!", 1, (255, 255, 255))
+            window.blit(text, (300, 230))
+            finish = True
 
 
        display.update()
