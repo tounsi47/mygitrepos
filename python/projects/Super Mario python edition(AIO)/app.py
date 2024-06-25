@@ -34,10 +34,9 @@ from PyQt5.QtCore import Qt #The essential module to run a PyQT5 based app
 from PyQt5.QtWidgets import *#To create widgets like windows , PushButton , labels....
 from PyQt5.QtGui import * #configure the theme of the widgets
 '''THe PyQt5 module will be used ONLY FOR THE MENU AND THE GAME SETTINGS'''
-from pygame import *
 
-from random import *
-'''The pygame, time and random module will be used for the game only'''
+
+
 
 '''First part: creating the game menu and the game settings'''
 '''Definition : When you will run the file, the firts window will apeear is the game menu,
@@ -51,8 +50,7 @@ from PyQt5.QtWidgets import *
 core_app = QApplication([])
 #defining functions that we'll use them for this python file
 def connect_game():
-    display.update()
-    clock.tick(300)
+    pass
 def open_info():
     about.show()
     
@@ -102,23 +100,9 @@ label.setFont(font)
 label2 = QLabel('This programm is made by the OpenJasmine individual project with the python and its modules(pygame, qt, time and random)')
 layout = QVBoxLayout()
 layout.addWidget(label, alignment = Qt.AlignCenter)
-layout.addWidget(label2)
+layout.addWidget(label2, alignment = Qt.AlignCenter)
 about.setLayout(layout)
-'''Part 3 : create the game'''
-'''In this part, we'll use the following modules:
--pygame
--random
--time'''
-gamewin = display.set_mode((1100 , 800))
-display.set_caption('Super mario python edition')
-clock = time.Clock()
-run = True
-finish = False
-while run :
-    for e in event.get():
-        if e.type == QUIT:
-            run = False
-    
+
 
 #This last line is to run the core app
 core_app.exec_()

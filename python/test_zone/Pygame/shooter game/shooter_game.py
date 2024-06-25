@@ -111,8 +111,8 @@ for i in range(1, 6):
 
 asteroids = sprite.Group()
 for i in range(1, 6):
-   asteroid = Enemy(img_as, randint(80, win_width - 80), -40, 80, 50, randint(1, 5))
-   asteroids.add(asteroid)
+   asteroid1 = Enemy(img_as, randint(80, win_width - 80), -40, 80, 50, randint(1, 5))
+   asteroids.add(asteroid1)
 bullets = sprite.Group()
 #the "game is over" variable: as soon as True is there, sprites stop working in the main loop
 finish = False
@@ -168,10 +168,16 @@ while run:
            score = score + 1
            monster = Enemy(img_enemy, randint(80, win_width - 80), -40, 80, 50, randint(1, 5))
            monsters.add(monster)
+       collides_ast = sprite.groupcollide(asteroids, bullets, True, True)
+       for c in collides:
+           #this loop will repeat as many times as the number of monsters hit
+           score = score + 1
+           asteroid1 = asteroid(img_as, randint(80, win_width - 80), -40, 80, 50, randint(1, 5))
+           asteroids.add(asteroid1)
  
  
        #possible lose: missed too many monsters or the character collided with an enemy
-       if sprite.spritecollide(ship, monsters, False) or lost >= max_lost:
+       if sprite.spritecollide(ship, monsters or asteroids, False) or lost >= max_lost:
            finish = True #lose, set the background and no longer control the sprites.
            window.blit(lose, (200, 200))
  
