@@ -76,7 +76,7 @@ class Enemy(GameSprite):
            self.rect.x = randint(80, win_width - 80)
            self.rect.y = 0
            lost = lost + 1
-class asteroid(GameSprite):
+class Asteroid(GameSprite):
    #enemy movement
    def update(self):
        self.rect.y += self.speed
@@ -111,8 +111,8 @@ for i in range(1, 6):
 
 asteroids = sprite.Group()
 for i in range(1, 6):
-   asteroid1 = Enemy(img_as, randint(80, win_width - 80), -40, 80, 50, randint(1, 5))
-   asteroids.add(asteroid1)
+   asteroid = Asteroid(img_as, randint(80, win_width - 80), -40, 80, 50, randint(1, 5))
+   asteroids.add(asteroid)
 bullets = sprite.Group()
 #the "game is over" variable: as soon as True is there, sprites stop working in the main loop
 finish = False
@@ -172,8 +172,8 @@ while run:
        for c in collides:
            #this loop will repeat as many times as the number of monsters hit
            score = score + 1
-           asteroid1 = asteroid(img_as, randint(80, win_width - 80), -40, 80, 50, randint(1, 5))
-           asteroids.add(asteroid1)
+           asteroid = Asteroid(img_as, randint(80, win_width - 80), -40, 80, 50, randint(1, 5))
+           asteroids.add(asteroid)
  
  
        #possible lose: missed too many monsters or the character collided with an enemy

@@ -1,0 +1,75 @@
+import pygame
+import sys
+
+# Initialize Pygame
+pygame.init()
+
+# Screen dimensions
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
+
+# Colors
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+
+class Player:
+    def __init__(self, x, y, width, height):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.y_velocity = 0  # Vertical velocity for jumping
+        self.jump_force = -20  # How high the player jumps
+
+    def move(self):
+        # Apply gravity
+        self.y_velocity += 0.5  # Gravity
+        self.y += self.y_velocity
+
+        # Restrict player to screen bounds vertically
+        if self.y > SCREEN_HEIGHT - self.height - 50:
+            self.y = SCREEN_HEIGHT - self.height - 50
+            self.y_velocity = 0
+
+    def jump(self):
+        # Only jump if player is on the ground (simple version)
+        if self.y == SCREEN_HEIGHT - self.height - 50:
+            self.y_velocity = self.jump_force
+
+    def draw(self, screen):
+        pygame.draw.rect(screen, BLACK, (self.x, self.y, self.width, self.height))
+
+# Initialize the screen
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption("Jumping Character Example")
+
+clock = pygame.time.Clock()
+
+# Create a player object
+player = Player(100, SCREEN_HEIGHT - 100, 50, 50)
+
+# Game loop
+running = True
+while running:
+    screen.fill(WHITE)
+
+    # Event handling
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+            pygame.quit()
+            sys.exit()
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_UP:
+                player.jump()
+
+    # Update player position and state
+    player.move()
+
+    # Draw player
+    player.draw(screen)
+
+    pygame.display.flip()
+    clock.tick(60)
+
+pygame.quit()
